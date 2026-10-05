@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Login' if mode=='login' else 'Student Registration' }} • RGM College Events{% endblock %}
+{% block content %}
+<section class="auth-shell reveal"><div class="auth-card glass tilt-card">
+  <div class="auth-orbit"><img class="auth-logo" src="{{ url_for('static', filename='brand/rgm-logo.jpg') }}" alt="RGM College Logo"></div>
+  <span class="eyebrow">RGM COLLEGE EVENTS</span>
+  {% if mode=='login' %}
+    <h1>One login. Your portal.</h1><p class="muted">Enter your registered email and password. The portal opens automatically according to the account role — student, organizer or administrator.</p>
+    <form method="post" class="form-grid single" autocomplete="on"><label>Email<input required type="email" name="email" autocomplete="username" placeholder="you@example.com"></label><label>Password<input required type="password" name="password" autocomplete="current-password" placeholder="••••••••"></label><button class="btn btn-primary full magnetic" type="submit">Continue to Portal <span>→</span></button></form>
+    <div class="login-note"><span>🎓 Students can register here.</span><a href="{{ url_for('register') }}">Create Student Account</a></div>
+  {% else %}
+    <h1>Create Student Account</h1><p class="muted">Register once to discover events, pay optional fees and collect verified certificates.</p>
+    <form method="post" class="form-grid"><label>Full Name<input required name="name"></label><label>Student ID<input name="student_id" placeholder="24091A05XX"></label><label>Department<input name="department" placeholder="CSE"></label><label>Year<input name="year" placeholder="3rd Year"></label><label>Phone<input name="phone" inputmode="tel"></label><label>Email<input required type="email" name="email"></label><label class="span-2">Password<input required minlength="6" type="password" name="password"></label><button class="btn btn-primary full span-2" type="submit">Create Student Account</button></form>
+    <div class="login-note"><span>Already registered?</span><a href="{{ url_for('login') }}">Back to Login</a></div>
+  {% endif %}
+</div></section>
+{% endblock %}
