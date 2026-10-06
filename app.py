@@ -802,18 +802,70 @@ def seed_command():
     print('Seed complete.')
 
 def seed_data():
-    if not User.query.filter_by(email='admin@rgmcollege.edu').first():
-        db.session.add(User(name='RGM Administrator',email='admin@rgmcollege.edu',password_hash=generate_password_hash('Admin@12345'),role='admin'))
-    if not User.query.filter_by(email='organizer@rgmcollege.edu').first():
-        db.session.add(User(name='CSE Event Organizer',email='organizer@rgmcollege.edu',password_hash=generate_password_hash('Organizer@12345'),role='organizer',department='CSE'))
-    if not User.query.filter_by(email='student@rgmcollege.edu').first():
-        db.session.add(User(name='Demo Student',email='student@rgmcollege.edu',password_hash=generate_password_hash('Student@12345'),role='student',student_id='RGM-DEMO-001',department='CSE',year='3rd Year'))
+    # Disable old admin account
+    old_admin = User.query.filter_by(email='admin@rgmcollege.edu').first()
+    if old_admin:
+        old_admin.active = False
+
+    # Disable old organizer account
+    old_organizer = User.query.filter_by(email='organizer@rgmcollege.edu').first()
+    if old_organizer:
+        old_organizer.active = False
+
+    # Create/update new admin
+    admin_password = os.getenv('ADMIN_PASSWORD')
+    admin = User.query.filter_by(email='admin272@gmail.com').first()
+
+    if admin_password:
+        if not admin:
+            admin = User(
+                name='RGM Administrator',
+                email='admin272@gmail.com',
+                role='admin',
+                active=True
+            )
+            db.session.add(admin)
+
+        admin.password_hash = generate_password_hash(admin_password)
+        admin.role = 'admin'
+        admin.active = True
+
+    # Create/update new organizer
+    organizer_password = os.getenv('ORGANIZER_PASSWORD')
+    organizer = User.query.filter_by(email='organizer27720@gmail.com').first()
+
+    if organizer_password:
+        if not organizer:
+            organizer = User(
+                name='CSE Event Organizer',
+                email='organizer27720@gmail.com',
+                role='organizer',
+                department='CSE',
+                active=True
+            )
+            db.session.add(organizer)
+
+        organizer.password_hash = generate_password_hash(organizer_password)
+        organizer.role = 'organizer'
+        organizer.active = True
+
+    # Demo student
+    student = User.query.filter_by(email='student@rgmcollege.edu').first()
+
+    if not student:
+        student = User(
+            name='Demo Student',
+            email='student@rgmcollege.edu',
+            password_hash=generate_password_hash('Student@12345'),
+            role='student',
+            student_id='RGM-DEMO-001',
+            department='CSE',
+            year='3rd Year',
+            active=True
+        )
+        db.session.add(student)
+
     db.session.commit()
-    organizer=User.query.filter_by(email='organizer@rgmcollege.edu').first()
-    if organizer and Event.query.count()==0:
-        today=date.today()
-        e=Event(title='AI Workshop 2026',category='Technical',description='A practical workshop covering artificial intelligence concepts, tools, and responsible AI.',event_date=today, start_time='10:00', end_time='16:00', venue='CSE Seminar Hall',registration_start=today,registration_deadline=today,max_participants=150,rules='Carry college ID. Seats are limited.',organizer_id=organizer.id,status='approved')
-        db.session.add(e); db.session.commit()
 
 def ensure_schema():
     """Lightweight additive migration so this ZIP also upgrades an older local database."""
