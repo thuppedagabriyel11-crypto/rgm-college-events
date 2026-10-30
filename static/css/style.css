@@ -8,6 +8,7 @@
   align-items:stretch;
   gap:0;
   margin:0 0 18px;
+  border-radius:5%;
 }
 
 .searchbar input{
